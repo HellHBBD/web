@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .basic-button {
+                width: 50px;
+            }
+        </style>
+    </head>
+    <body>
+        <table>
+            <caption>
+                <b>My Calculator</b>
+            </caption>
+            <tr>
+                <td>Result:</td>
+                <td colspan="3" id="result" align="center"></td>
+            </tr>
+
+            <tr>
+                <td>Input:</td>
+                <td colspan="3" id="input" align="center"></td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button class="basic-button" onclick="clearInput()">
+                        Clear
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('(')">
+                        (
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar(')')">
+                        )
+                    </button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button class="basic-button" onclick="addChar('1')">
+                        1
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('2')">
+                        2
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('3')">
+                        3
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('+')">
+                        +
+                    </button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button class="basic-button" onclick="addChar('4')">
+                        4
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('5')">
+                        5
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('6')">
+                        6
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('-')">
+                        -
+                    </button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button class="basic-button" onclick="addChar('7')">
+                        7
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('8')">
+                        8
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('9')">
+                        9
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('*')">
+                        *
+                    </button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button class="basic-button" onclick="addChar('.')">
+                        .
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('0')">
+                        0
+                    </button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="equal()">=</button>
+                </td>
+                <td>
+                    <button class="basic-button" onclick="addChar('/')">
+                        /
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" align="center">
+                    <button style="width: 200px" onclick="check()">
+                        Check My Result
+                    </button>
+                </td>
+            </tr>
+        </table>
+        <script>
+            function clearInput() {
+                document.getElementById("input").textContent = "";
+                document.getElementById("result").textContent = "";
+            }
+
+            function equal() {
+                const expr = document.getElementById("input").textContent;
+                try {
+                    document.getElementById("result").textContent = eval(expr);
+                } catch {
+                    document.getElementById("result").textContent = "Error";
+                }
+            }
+
+            function check() {
+                let result = document.getElementById("result");
+                if (result.textContent === "") {
+                    result.textContent = "No result yet";
+                    return;
+                }
+                const result_number = Number(result.textContent);
+
+                switch (true) {
+                    case isNaN(result_number):
+                        result.textContent = "No result yet";
+                        break;
+                    case result_number > 0:
+                        result.textContent = "Positive";
+                        if (result_number % 3 == 0) {
+                            result.textContent += "(3)";
+                        }
+                        break;
+                    case result_number < 0:
+                        result.textContent = "Negative";
+                        break;
+                    case result_number === 0:
+                        result.textContent = "Zero";
+                        break;
+                }
+            }
+
+            function addChar(c) {
+                const input = document.getElementById("input");
+                input.textContent += c;
+            }
+        </script>
+    </body>
+</html>
