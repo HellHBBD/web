@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <style>
+            nav a {
+                color: green;
+                font-weight: bold;
+            }
+            .text:focus {
+                background-color: firebrick;
+            }
+            form {
+                width: 50%;
+                padding: 10px;
+            }
+            table {
+                border-collapse: collapse;
+                margin: 20px;
+            }
+            .right {
+                float: right;
+            }
+            div {
+                width: 50%;
+                padding: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <h1>Speaking Island</h1>
+            <ul>
+                <li><a href="#top">Home</a></li>
+                <li><a href="#reservation">Reservation</a></li>
+                <li><a href="#location">Location</a></li>
+                <li>
+                    <a href="specials.html" target="iframe"
+                        >View Today's Specials</a
+                    >
+                </li>
+            </ul>
+        </nav>
+
+        <div class="right">
+            <h2 id="reservation">Current Reservation</h2>
+            <table border="1" id="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Size</th>
+                </tr>
+            </table>
+            <p id="p"></p>
+        </div>
+        <!-- <form> -->
+        <div>
+            <h2>Make a Reservation</h2>
+
+            <fieldset>
+                <legend>Customer Information</legend>
+                <label for="name">Name: </label>
+                <input type="text" name="name" id="name" class="text" /><br />
+                <label for="email">Email: </label>
+                <input type="email" name="email" id="email" class="text" />
+            </fieldset>
+            <fieldset>
+                <legend>Date and Time</legend>
+                <label for="date">Date: </label>
+                <input type="date" name="date" id="date" /><br />
+                <label for="time">Time: </label>
+                <input type="time" name="time" id="time" />
+            </fieldset>
+            <label for="size">Party Size: </label>
+            <input
+                type="text"
+                name="size"
+                pattern="[0-9]*"
+                id="size"
+                class="text"
+            /><br />
+            <input
+                type="submit"
+                value="Submit Reservation"
+                onclick="submit()"
+            />
+        </div>
+        <!-- </form> -->
+
+        <h2 id="location">Our Location</h2>
+        <iframe
+            width="600"
+            height="400"
+            name="iframe"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1836.3662578924166!2d120.21622630474543!3d22.996861559492736!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x346e769297473051%3A0x978c149dea78e82f!2sChung%20Cheng%20Gym!5e0!3m2!1sen!2stw!4v1762235148050!5m2!1sen!2stw"
+            style="border: 0"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+
+        <script>
+            let reservation = new Array();
+
+            function submit() {
+                const name = document.getElementById("name").value;
+                const email = document.getElementById("email").value;
+                const date = document.getElementById("date").value;
+                const time = document.getElementById("time").value;
+                const size = document.getElementById("size").value;
+
+                // console.log(name.value);
+                if (
+                    name === "" ||
+                    email === "" ||
+                    date === "" ||
+                    time === "" ||
+                    size === ""
+                ) {
+                    alert("You missed something");
+                    return;
+                } else if (size < 1 || size > 10) {
+                    alert("Party size must between 1 and 10");
+                    return;
+                } else if (size == 1) {
+                    alert("To lonely to reserve");
+                    return;
+                }
+
+                let reserve = new Array(name, date, time, size);
+                reservation.push(reserve);
+                console.log(reservation);
+
+                let inner_html = "<tr><th>Name<th>Date<th>Time<th>Size";
+                for (i in reservation) {
+                    inner_html = inner_html + "<tr><td>" + reserve.join("<td>");
+                    let table = document.getElementById("table");
+                    table.innerHTML = inner_html;
+                }
+                let p = document.getElementById("p");
+                p.textContent =
+                    "Total Confirmed Reservations: " + reservation.length;
+            }
+        </script>
+    </body>
+</html>
+

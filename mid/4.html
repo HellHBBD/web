@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-Hant">
+    <head>
+        <meta charset="UTF-8" />
+        <title>固定 thead / tfoot 捲動效果</title>
+        <style>
+            table {
+                width: 70%;
+                border-collapse: collapse;
+                margin: 20px auto;
+                text-align: center;
+                font-family: sans-serif;
+            }
+
+            /* 表格區塊可滾動 */
+            .table-container {
+                width: 80%;
+                height: 300px;
+                margin: auto;
+                overflow-y: scroll;
+                border: 2px solid #555;
+            }
+
+            /* 框線 */
+            th,
+            td {
+                border: 1px solid #444;
+                padding: 8px;
+            }
+
+            /* 表頭與表尾顏色 */
+            thead {
+                background-color: #f4b183;
+                position: sticky;
+                top: 0;
+                z-index: 2; /* 確保在上方 */
+            }
+
+            tfoot {
+                background-color: #bdd7ee;
+                position: sticky;
+                bottom: 0;
+                z-index: 1;
+            }
+
+            tbody tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h2 style="text-align: center">固定 thead / tfoot 捲動測試</h2>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>編號</th>
+                        <th>姓名</th>
+                        <th>分數</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <!-- 建立多筆資料方便測試滾動 -->
+                    <tr>
+                        <td>1</td>
+                        <td>王小明</td>
+                        <td>90</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>李小華</td>
+                        <td>85</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>張大中</td>
+                        <td>78</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>林佳慧</td>
+                        <td>92</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>陳育霖</td>
+                        <td>80</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>黃冠廷</td>
+                        <td>75</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>吳佩真</td>
+                        <td>88</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>鄭怡君</td>
+                        <td>95</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>簡志豪</td>
+                        <td>82</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>周冠宇</td>
+                        <td>91</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>高宥臻</td>
+                        <td>84</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>許家豪</td>
+                        <td>89</td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>邱柏安</td>
+                        <td>93</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>陳冠穎</td>
+                        <td>87</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>曾怡婷</td>
+                        <td>85</td>
+                    </tr>
+                    <tr>
+                        <td>16</td>
+                        <td>蔡宗憲</td>
+                        <td>77</td>
+                    </tr>
+                    <tr>
+                        <td>17</td>
+                        <td>王雅雯</td>
+                        <td>90</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>張冠倫</td>
+                        <td>83</td>
+                    </tr>
+                    <tr>
+                        <td>19</td>
+                        <td>劉政安</td>
+                        <td>94</td>
+                    </tr>
+                    <tr>
+                        <td>20</td>
+                        <td>楊志強</td>
+                        <td>79</td>
+                    </tr>
+                </tbody>
+
+                <tfoot>
+                    <tr>
+                        <td colspan="3">共 20 筆資料</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="./Baby_name.js"></script>
+        <style>
+            #pyramid {
+                margin-top: 16px;
+            }
+            .name-row {
+                white-space: nowrap;
+            }
+            .name-cell {
+                display: inline-block;
+                width: var(--column-width, 12ch);
+                margin-bottom: 4px;
+            }
+            .highlight {
+                background: #80d4ff;
+            }
+        </style>
+    </head>
+    <body>
+        <select id="list"></select>
+        <input type="button" id="select" value="Select" onclick="Select()" />
+        <input
+            type="button"
+            id="lucky"
+            value="I feel lucky"
+            onclick="lucky()"
+        />
+        <input type="button" id="disco" value="Let's Disco" onclick="disco()" />
+        <div id="time"></div>
+        <div id="pyramid"></div>
+
+        <script>
+            const nameList = Baby_Name_List.split(",").map((name) =>
+                name.trim(),
+            );
+            const list = document.getElementById("list");
+            const time = document.getElementById("time");
+            const pyramid = document.getElementById("pyramid");
+            let timer = null;
+
+            const maxNameLength = Math.max(
+                ...nameList.map((name) => name.length),
+            );
+            pyramid.style.setProperty(
+                "--column-width",
+                `${maxNameLength + 2}ch`,
+            );
+            nameList.forEach((item, index) => {
+                const option = document.createElement("option");
+                option.value = item;
+                option.textContent = `${index + 1}. ${item}`;
+                list.appendChild(option);
+            });
+
+            function showTime() {
+                const now = new Date();
+
+                const date = now.toLocaleDateString("zh-TW", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                });
+
+                const timeStr = now.toLocaleTimeString("zh-TW", {
+                    hour12: true,
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                });
+
+                time.textContent = `${date} ${timeStr}`;
+            }
+
+            function highlight(index) {
+                showTime();
+                pyramid.innerHTML = "";
+                let currentIndex = 0;
+                for (
+                    let rowCount = 1;
+                    currentIndex < nameList.length;
+                    rowCount++
+                ) {
+                    const row = document.createElement("div");
+                    row.className = "name-row";
+                    for (
+                        let col = 0;
+                        col < rowCount && currentIndex < nameList.length;
+                        col++, currentIndex++
+                    ) {
+                        const cell = document.createElement("span");
+                        cell.className = "name-cell";
+                        const text = document.createElement("span");
+                        text.textContent = nameList[currentIndex];
+                        if (currentIndex === index) {
+                            text.classList.add("highlight");
+                        }
+                        cell.appendChild(text);
+                        row.appendChild(cell);
+                    }
+                    pyramid.appendChild(row);
+                }
+            }
+
+            function Select() {
+                highlight(list.selectedIndex);
+            }
+
+            function lucky() {
+                const randomIndex = Math.floor(Math.random() * nameList.length);
+                highlight(randomIndex);
+            }
+
+            function disco() {
+                const disco = document.getElementById("disco");
+
+                if (timer === null) {
+                    timer = setInterval(lucky, 1000);
+                    disco.value = "Stop the music!";
+                } else {
+                    clearInterval(timer);
+                    timer = null;
+                    disco.value = "Let’s Disco!";
+                }
+            }
+        </script>
+    </body>
+</html>

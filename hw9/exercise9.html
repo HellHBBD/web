@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="./Baby_name_Short.js"></script>
+</head>
+<body>
+    <input id="input" type="text" placeholder="Use a space to seperate">
+    <button onclick="addName()">Add a name.</button>
+    <div id="div"></div>
+    <table id="table">
+        <tr>
+            <th>Name</th>
+        </tr>
+    </table>
+    <input type="range" id="slider" min="0" max="100" value="50" step="1"><br>
+    <span id="display"></span>
+
+    <script>
+        var list = Baby_Name_List.split(",");
+
+        var input = document.getElementById("input");
+        var div = document.getElementById("div");
+        var table = document.getElementById("table");
+
+        var slider = document.getElementById("slider");
+        var display = document.getElementById("display");
+        slider.value = 50;
+        display.textContent = `Value: ${slider.value}`;
+
+        function updateTable() {
+            div.textContent = `${list.length} names in the table`;
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+            for (var i in list) {
+                const tr = document.createElement("tr");
+                const td = document.createElement("td");
+                td.appendChild(document.createTextNode(list[i]));
+                tr.appendChild(td);
+                table.appendChild(tr);
+            }
+        }
+
+        function addName() {
+            var names = input.value.trim().split(/\s+/);
+            if (names.length != 2) {
+                alert("Wrong input");
+                return;
+            }
+            list.push(names[0]);
+            updateTable();
+        }
+        
+        table.setAttribute("border", "1");
+        updateTable();
+
+        // slider value
+        slider.addEventListener("input", () => {
+            display.textContent = `Value: ${slider.value}`;
+        });
+
+        // clipboard alert
+        table.addEventListener("copy", () => {
+            const copiedText = window.getSelection().toString();
+            if (!copiedText.trim()) return;
+
+            const lines = copiedText
+                .split("\n")
+                .map(s => s.trim())
+                .filter(s => s.length > 0);
+
+            const validNames = lines.filter(line => list.includes(line));
+
+            if (validNames.length > 0) {
+                const message = validNames.join(", ");
+                alert(`${message} is copied!!`);
+            }
+        });
+    </script>
+</body>
+</html>
