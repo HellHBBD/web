@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Exercise 11 - jQuery UI</title>
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+  <link rel="stylesheet"
+        href="https://code.jquery.com/ui/1.13.3/themes/smoothness/jquery-ui.css">
+
+  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    #menu {
+      width: 200px;
+    }
+
+    #progressbar {
+      width: 300px;
+      margin: 10px 0;
+    }
+
+    #slider {
+      width: 500px;
+      margin: 10px 0;
+    }
+
+    .section-title {
+      margin: 20px 0 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <ul id="menu">
+    <li>My favorite sites:
+      <ul>
+        <li>Youtube</li>
+        <li>Wikipedia</li>
+        <li>Amazon</li>
+        <li>Facebook
+          <ul>
+            <li>Instagram</li>
+            <li>WhatsApp</li>
+            <li>Oculus VR</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <p>
+    <input type="text" id="datepicker" placeholder="Select a date">
+  </p>
+  
+  <div>
+    <span id="progress-label"></span>
+    <div id="progressbar"></div>
+  </div>
+
+  <p>
+    <span id="slider-value"></span>
+    <div id="slider"></div>
+  </p>
+
+  <button id="btn-lucky">Feeling Lucky</button>
+
+  <div id="dialog-luck" title="Today's Luck" style="display:none;"></div>
+
+
+  <script>
+    $(function () {
+      $("#menu").menu();
+
+      $("#datepicker").datepicker({
+        dateFormat: "yy-mm-dd",
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        onSelect: function (dateText) {
+          var date = $(this).datepicker("getDate");
+          var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+          var dayName = days[date.getDay()];
+          $(this).val(dateText + " (" + dayName + ")");
+        }
+      });
+
+      $("#progressbar").progressbar({ value: 0 });
+
+      function updateDayProgress() {
+        var now = new Date();
+        var seconds =
+          now.getHours() * 3600 +
+          now.getMinutes() * 60 +
+          now.getSeconds();
+
+        var percent = seconds / 86400 * 100;
+        percent = Math.round(percent * 100) / 100;
+
+        $("#progressbar").progressbar("value", percent);
+        $("#progress-label").text("你今天已經過了 " + percent.toFixed(2) + "%");
+      }
+
+      updateDayProgress();
+      setInterval(updateDayProgress, 1000);
+
+      $("#slider").slider({
+        min: 0,
+        max: 100,
+        value: 1,
+        step: 1,
+        slide: function (event, ui) {
+          var v = ui.value;
+
+          if (v !== 0 && v % 2 === 0) {
+            var nextOdd = v + 1;
+            v = nextOdd > 100 ? v - 1 : nextOdd;
+            $(this).slider("value", v);
+          }
+          $("#slider-value").text(v);
+          return false;
+        }
+      });
+
+      $("#slider-value").text($("#slider").slider("value"));
+
+      $("#dialog-luck").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 300
+      });
+
+      $("#btn-lucky").on("click", function () {
+        var r = Math.random();
+        var msg;
+        if (r < 0.1) {
+          msg = "Very Lucky!";
+        } else if (r < 0.9) {
+          msg = "Average";
+        } else {
+          msg = "Unlucky…";
+        }
+        $("#dialog-luck").text(msg);
+        $("#dialog-luck").dialog("open");
+      });
+    });
+  </script>
+</body>
+</html>
