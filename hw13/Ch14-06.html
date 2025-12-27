@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch14-06</title>
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+    var timer;
+    $(function(){        
+        // 設定按鈕事件處理函式
+        $('#reload').click(function(event){
+            // 讓按鈕變成不能使用
+            $('#reload').attr('disabled',true).text('下載中');
+            
+            // 台南公車預估到站時間資料 (N1)
+            var url='https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/Tainan?$top=60&$format=JSON';
+            
+            // 用 ajax() 以 JSON 方式取得資料
+            $.ajax({url:url,
+              dataType:'json',
+              success: onsuccess,
+			  error  : function(x){
+                         console.log('錯誤, 代碼:'+x.status);},
+              complete: function(){
+                  // 讓按鈕變成可使用
+                  $('#reload').prop('disabled',false).text('更新');
+                  }
+            });
+		});
+        
+        //立即觸發按鈕事件
+        $('#reload').click();
+    });
+	
+    // AJAX 要求成功時執行的函式 
+	function onsuccess(data){  
+	  if (data == null) {
+         alert("下載失敗!");  
+         return;
+      }
+      // 清空區塊
+	  $('#showdata').empty();
+	  
+      // 逐筆處理陣列中的資料
+      $.each(data, function(index){
+		//將資料放在個別 div 中
+		var div=$('<div></div>').addClass('left');
+		
+		//路線名稱 (SubRouteName 可能是物件)
+        var subRouteName = this.SubRouteName;
+        if (subRouteName && typeof subRouteName === 'object') {
+            subRouteName = subRouteName.Zh_tw || subRouteName.En || '';
+        }
+        $('<h3></h3>').text(subRouteName || '未提供路線').appendTo(div);
+		
+        //站牌名稱 (StopName 可能是物件)
+        var stopName = this.StopName;
+        if (stopName && typeof stopName === 'object') {
+            stopName = stopName.Zh_tw || stopName.En || '';
+        }
+        $('<p></p>').text('站牌：' + (stopName || '未提供站牌')).appendTo(div);
+        
+        //去返程顯示
+        var directionText = '未知';
+        if (this.Direction === 0) directionText = '去程';
+        else if (this.Direction === 1) directionText = '返程';
+        else if (this.Direction === 2) directionText = '迴圈';
+        $('<p></p>').text('方向：' + directionText).appendTo(div);
+
+        // 預估到站時間 (秒轉分秒)
+        var estimateSec = this.EstimateTime;
+        var estimateMin = null;
+        var estimateRemainSec = null;
+        if (estimateSec !== null && estimateSec !== undefined && estimateSec !== '') {
+            estimateSec = parseInt(estimateSec, 10);
+            estimateMin = Math.floor(estimateSec / 60);
+            estimateRemainSec = estimateSec % 60;
+        }
+        if (estimateMin !== null) {
+            $('<h2></h2>').text(estimateMin + ' 分 ' + estimateRemainSec + ' 秒').appendTo(div);
+        } else {
+            $('<h2></h2>').text('未提供').appendTo(div);
+        }
+        
+        // 依到站時間指定不同類別, 以套用 CSS 樣式
+		var etaClass = '';
+        if (estimateSec !== null && estimateSec !== undefined && estimateSec !== '') {
+            if (estimateSec <= 300) etaClass = 'soon';
+            else if (estimateSec <= 600) etaClass = 'medium';
+            else etaClass = 'late';
+        }
+		
+		// 指定類別並加到網頁中
+		div.addClass(etaClass).appendTo($('#showdata'));
+	  });
+      }
+    </script>
+    <style> 
+   .left {float:left; 
+          border:dashed 1px gray;
+          text-align:center;
+          padding:6px;
+          margin:6px;
+          min-width:180px;}  
+   .soon   {background-color:orange}  /* <= 5 分鐘 */
+   .medium {background-color:yellow}  /* 6-10 分鐘 */
+   .late   {background-color:green}   /* > 10 分鐘 */
+
+	</style>
+</head>
+
+<body>
+<p><b>即時台南公車到站資訊</b>
+   <button id="reload">更新</button></p>
+
+<!-- 用來放置公車到站資料的區塊 -->
+<div id="showdata"></div>
+</body>
+
+</html>
+<!--
+[{"Name":"宜蘭縣","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"花蓮縣","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"台東縣","Type":"縣市","UVI":"7","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"屏東縣","Type":"縣市","UVI":"7","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"高雄市","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"台南市","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"嘉義縣","Type":"縣市","UVI":"5","UVIStatus":"中量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"嘉義市","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"南投縣","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"雲林縣","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"彰化縣","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"台中市","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"苗栗縣","Type":"縣市","UVI":"7","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"新竹縣","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"新竹市","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"桃園市","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"新北市","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"台北市","Type":"縣市","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"基隆市","Type":"縣市","UVI":"5","UVIStatus":"中量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"三仙台","Type":"旅遊預報點","UVI":"7","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"太平山","Type":"旅遊預報點","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"墾丁","Type":"旅遊預報點","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"日月潭","Type":"旅遊預報點","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"阿里山","Type":"旅遊預報點","UVI":"5","UVIStatus":"中量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"太魯閣","Type":"旅遊預報點","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"梨山","Type":"旅遊預報點","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"合歡山","Type":"旅遊預報點","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"玉山","Type":"旅遊預報點","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"溪頭","Type":"旅遊預報點","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"龍洞","Type":"旅遊預報點","UVI":"5","UVIStatus":"中量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"陽明山","Type":"旅遊預報點","UVI":"5","UVIStatus":"中量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"小琉球","Type":"外島預報點","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"蘭嶼","Type":"外島預報點","UVI":"7","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"綠島","Type":"外島預報點","UVI":"7","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"澎湖","Type":"外島預報點","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"馬祖","Type":"外島預報點","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"金門","Type":"外島預報點","UVI":"7","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"花東空品區","Type":"空品區","UVI":"6-7","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"宜蘭空品區","Type":"空品區","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"高屏空品區","Type":"空品區","UVI":"6-7","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"雲嘉南空品區","Type":"空品區","UVI":"5-6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"中部空品區","Type":"空品區","UVI":"6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"竹苗空品區","Type":"空品區","UVI":"6-7","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"},
+{"Name":"北部空品區","Type":"空品區","UVI":"5-6","UVIStatus":"高量級","PublishTime":"2015-11-17 17:00"}]
+-->
